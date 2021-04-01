@@ -1,0 +1,106 @@
+import pygame
+global font
+
+pygame.init()
+
+wt = 1080
+wts = wt / 10
+ht = 2316
+hts = ht/20
+
+fns=("Ti","Fi","Te","Fe","Ni","Si","Ne","Se")
+
+def second(elem):
+	return elem[0]
+
+screen = pygame.display.set_mode((wt,ht))
+
+running = True
+word="blank"
+
+font=pygame.font.Font(None,50)
+
+cell = [[0,0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0,0]]
+			
+color= ((255,255,255),
+			(255,200,200),
+			(255,100,100),
+			(0,0,255))
+
+types= [
+[0,"INTJ","Ni","Te","Fi","Se","Ne","Ti","Fe","Si"],
+[0,"ENTJ","Te","Ni","Se","Fi","Ti","Ne","Si","Fe"],
+[0,"ISTJ","Si","Te","Fi","Ne","Se","Ti","Fe","Ni"],
+[0,"ESTJ","Te","Si","Ne","Fi","Ti","Se","Ni","Fe"],
+[0,"INTP","Ti","Ne","Si","Fe","Te","Ni","Se","Fi"],
+[0,"ENTP","Ne","Ti","Fe","Si","Ni","Te","Fi","Se"],
+[0,"ISTP","Ti","Se","Ni","Fe","Te","Si","Ne","Fi"],
+[0,"ESTP","Se","Ti","Fe","Ni","Si","Te","Fi","Ne"],
+[0,"INFJ","Ni","Fe","Ti","Se","Ne","Fi","Te","Si"],
+[0,"ENFJ","Fe","Ni","Se","Ti","Fi","Ne","Si","Te"],
+[0,"ISFJ","Si","Fe","Ti","Ne","Se","Fi","Te","Ni"],
+[0,"ESFJ","Fe","Si","Ne","Ti","Fi","Se","Ni","Te"],
+[0,"INFP","Fi","Ne","Si","Te","Fe","Ni","Se","Ti"],
+[0,"ENFP","Ne","Fi","Te","Si","Ni","Fe","Ti","Se"],
+[0,"ISFP","Fi","Se","Ni","Te","Fe","Si","Ne","Ti"],
+[0,"ESFP","Se","Fi","Te","Ni","Si","Fe","Ti","Ne"]
+				]
+				
+def write(text,location,color=(255,255,255)):
+    screen.blit(font.render(text,True,color),location)
+
+while running:
+	
+	for event in pygame.event.get():
+		if event.type == pygame.MOUSEBUTTONUP:
+			if 7*wts <= mouse[0] <= 9*wts and 9.1*hts <= mouse[1] <= 9.6*hts:
+				for i in range (0,8):
+					for j in range (0,8):
+						cell[i][j] = 0
+						for type in types:
+							type[0] = 0
+						
+			for i in range (1,9):
+				for j in range (1,9):
+					if i*wts <= mouse[0] <= i*wts+wts and j*hts <= mouse[1] <= j*hts+hts:	
+						cell[i-1][j-1] =(cell[i-1][j-1]+1)%4									
+						for type in types:
+							if fns[i-1] in type[j+1]:
+								if cell[i-1][j-1] ==  1:
+									type[0]=type[0]-1
+								if cell[i-1][j-1] == 2:
+									type[0]=type[0]-1
+								if cell[i-1][j -1] == 3:
+									type[0]=type[0]+3
+								if cell[i-1][j -1] == 0:
+									type[0]=type[0]-1
+								  			
+		if event.type == pygame.QUIT:
+			running = False
+			
+	pygame.display.update()
+	screen.fill((235,255,255))	
+	mouse = pygame.mouse.get_pos()
+	
+
+	types.sort(key=second, reverse=True)
+
+	for i in range(1,9):
+		write(str(fns[i-1]),(i*wts+30,hts-50),(0,0,0))
+		for j in range (1,9):
+			pygame.draw.rect(screen,color[cell[i-1][j-1]],(i*wts,j*hts,wts,hts))
+			pygame.draw.rect(screen,(0,0,0),(i*wts,j*hts,wts,hts),5)
+			write(str(j),(wts-30,j*hts+40),(0,0,0))																
+	for n in range(len(types)):
+		write(str(types[n][0]) + ", " + str(types[n][1]),(wts,(n+1)*30+ 10*hts),(0,0,0,))										
+	pygame.draw.rect(screen,(0,0,0),(7*wts,9.1*hts,2*wts,hts/2),5)
+	pygame.draw.rect(screen,(255,255,255),(7*wts,9.1*hts,2*wts,hts/2))
+	write("Clear",(7.5*wts,9.2*hts),(0,0,0))														
+pygame.quit()
